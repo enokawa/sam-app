@@ -37,6 +37,8 @@ jobs:
       
       - name: Integration test
         run: python -m pytest tests/integration -v
+        env:
+          AWS_SAM_STACK_NAME: ${{ secrets.AWS_SAM_STACK_NAME }}
 
       - name: Setup AWS SAM CLI
         uses: aws-actions/setup-sam@v2

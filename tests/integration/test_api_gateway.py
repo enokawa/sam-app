@@ -26,7 +26,7 @@ class TestApiGateway(TestCase):
     def setUp(self) -> None:
         """
         Based on the provided env variable AWS_SAM_STACK_NAME,
-        here we use cloudformation API to find out what the HelloWorldApi URL is
+        here we use cloudformation API to find out what the Api URL is
         """
         stack_name = TestApiGateway.get_stack_name()
 
@@ -34,7 +34,6 @@ class TestApiGateway(TestCase):
 
         try:
             response = client.describe_stacks(StackName=stack_name)
-            print(response)
         except Exception as e:
             raise Exception(
                 f"Cannot find stack {stack_name}. \n" f'Please make sure stack with the name "{stack_name}" exists.'
@@ -43,8 +42,8 @@ class TestApiGateway(TestCase):
         stacks = response["Stacks"]
 
         stack_outputs = stacks[0]["Outputs"]
-        api_outputs = [output for output in stack_outputs if output["OutputKey"] == "HelloWorldApi"]
-        self.assertTrue(api_outputs, f"Cannot find output HelloWorldApi in stack {stack_name}")
+        api_outputs = [output for output in stack_outputs if output["OutputKey"] == "Api"]
+        self.assertTrue(api_outputs, f"Cannot find output Api in stack {stack_name}")
 
         self.api_endpoint = api_outputs[0]["OutputValue"]
 

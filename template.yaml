@@ -128,3 +128,14 @@ Resources:
             Path: /hello
             Method: get
             RestApiId: !Ref Api
+
+Outputs:
+  Api:
+    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
+    Value: !Join
+      - ''
+      - - https://
+        - !Ref Api
+        - !Sub .execute-api.${AWS::Region}.amazonaws.com
+        - !Sub /${Environment}
+        - /hello
