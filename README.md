@@ -13,13 +13,13 @@ Tests are defined in the `tests` folder in this project. Use PIP to install the 
 
 ```bash
 # install dependencies
-sam-app$ pip install -r tests/requirements.txt --user
+pip install -r tests/requirements.txt --user
 
 # unit test
-sam-app$ python -m pytest tests/unit -v
+python -m pytest tests/unit -v
 # integration test
 
-sam-app$ AWS_SAM_STACK_NAME=<stack-name> python -m pytest tests/integration -v
+AWS_SAM_STACK_NAME=<stack-name> python -m pytest tests/integration -v
 ```
 
 ## Cleanup
