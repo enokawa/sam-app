@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: >
   sam-app
@@ -11,8 +11,92 @@ Parameters:
   Environment:
     Type: String
     Default: dev
+  GitHubOrg:
+    Type: String
+    Default: "enokawa"
+  RepositoryName:
+    Type: String
+    Default: "sam-app"
+  OIDCProviderArn:
+    Type: String
+    Default: ""
+
+Conditions:
+  CreateOIDCProvider: !Equals
+    - !Ref OIDCProviderArn
+    - ""
 
 Resources:
+  OidcProvider: # https://github.com/aws-actions/configure-aws-credentials#sample-iam-role-cloudformation-template
+    Type: AWS::IAM::OIDCProvider
+    Properties:
+      ClientIdList:
+        - sts.amazonaws.com
+      ThumbprintList:
+        - 6938fd4d98bab03faadb97b34396831e3780aea1
+      Url: https://token.actions.githubusercontent.com
+  Role:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${Environment}-OIDCRole"
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRoleWithWebIdentity
+            Principal:
+              Federated: !If
+                - CreateOIDCProvider
+                - !Ref OidcProvider
+                - !Ref OIDCProviderArn
+            Condition:
+              StringLike:
+                token.actions.githubusercontent.com:sub: !Sub repo:${GitHubOrg}/${RepositoryName}:*
+      Policies:
+        - PolicyName: !Sub "${Environment}-SAMDeployPolicy"
+          PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - cloudformation:CreateStack
+                    - cloudformation:DescribeStacks
+                    - cloudformation:DescribeStackEvents
+                    - cloudformation:DescribeStackResources
+                    - cloudformation:GetTemplate
+                    - cloudformation:ValidateTemplate
+                  Resource: "*"
+                - Effect: Allow
+                  Action:
+                    - iam:Get*
+                    - iam:List*
+                    - iam:CreateRole
+                    - iam:UpdateRole
+                    - iam:UpdateRoleDescription
+                    - iam:CreatePolicy
+                    - iam:PutRolePolicy
+                    - iam:UpdateAssumeRolePolicy
+                  Resource: "*"
+                - Effect: Allow
+                  Action:
+                    - apigateway:*
+                  Resource: "*"
+                - Effect: Allow
+                  Action:
+                    - lambda:List*
+                    - lambda:Get*
+                    - lambda:Create*
+                    - lambda:Publish*
+                    - lambda:Put*
+                    - lambda:Update*
+                    - lambda:*
+                  Resource: "*"
+                - Effect: Allow
+                  Action:
+                    - logs:Describe*
+                    - logs:List*
+                    - logs:Create*
+                    - logs:Put*
+                  Resource: "*"
   Api:
     Type: AWS::Serverless::Api
     Properties:
