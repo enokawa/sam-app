@@ -60,11 +60,8 @@ Resources:
                   Action:
                     - cloudformation:CreateStack
                     - cloudformation:CreateChangeSet
-                    - cloudformation:DescribeStacks
-                    - cloudformation:DescribeStackEvents
-                    - cloudformation:DescribeStackResources
-                    - cloudformation:GetTemplate
-                    - cloudformation:GetTemplateSummary
+                    - cloudformation:Describe*
+                    - cloudformation:Get*
                     - cloudformation:ValidateTemplate
                   Resource: "*"
                 - Effect: Allow
