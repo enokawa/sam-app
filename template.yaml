@@ -59,6 +59,7 @@ Resources:
                 - Effect: Allow
                   Action:
                     - cloudformation:CreateStack
+                    - cloudformation:CreateChangeSet
                     - cloudformation:DescribeStacks
                     - cloudformation:DescribeStackEvents
                     - cloudformation:DescribeStackResources
