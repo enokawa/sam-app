@@ -34,6 +34,7 @@ class TestApiGateway(TestCase):
 
         try:
             response = client.describe_stacks(StackName=stack_name)
+            print(response)
         except Exception as e:
             raise Exception(
                 f"Cannot find stack {stack_name}. \n" f'Please make sure stack with the name "{stack_name}" exists.'

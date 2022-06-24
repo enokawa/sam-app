@@ -17,8 +17,8 @@ pip install -r tests/requirements.txt --user
 
 # unit test
 python -m pytest tests/unit -v
-# integration test
 
+# integration test
 AWS_SAM_STACK_NAME=<stack-name> python -m pytest tests/integration -v
 ```
 
