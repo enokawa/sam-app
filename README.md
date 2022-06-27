@@ -1,15 +1,8 @@
-# sam-app
+# sam-cicd-sample
 
-## Deploy
-
-```bash
-sam build
-sam deploy　--s3-bucket <your-s3-bucket-name>
-```
+CI/CD sample of AWS SAM using GitHub Actions and OpenID Connect.
 
 ## Tests
-
-Tests are defined in the `tests` folder in this project. Use PIP to install the test dependencies and run tests.
 
 ```bash
 # install dependencies
@@ -20,6 +13,13 @@ python -m pytest tests/unit -v
 
 # integration test
 AWS_SAM_STACK_NAME=<stack-name> python -m pytest tests/integration -v
+```
+
+## Deploy
+
+```bash
+sam build
+sam deploy --s3-bucket <your-s3-bucket-name>
 ```
 
 ## Cleanup
