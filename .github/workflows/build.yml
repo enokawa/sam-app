@@ -40,11 +40,11 @@ jobs:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/dev-OIDCRole
           role-session-name: SAMBuildSession
 
-      - name: Validate CloudFormation template
-        run: aws cloudformation validate-template --template-body file://.aws-sam/build/template.yaml
-
       - name: sam build
         run: sam build
+
+      - name: Validate CloudFormation template
+        run: aws cloudformation validate-template --template-body file://.aws-sam/build/template.yaml
 
       - name: Unit test
         run: python -m pytest tests/unit -v
