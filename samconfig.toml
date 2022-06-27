@@ -7,5 +7,5 @@ s3_prefix = "sam-app"
 region = "ap-northeast-1"
 confirm_changeset = true
 capabilities = "CAPABILITY_NAMED_IAM"
-parameter_overrides = "Environment=\"dev\""
+parameter_overrides = "Environment=\"dev\" GitHubOrg=\"enokawa\" RepositoryName=\"sam-cicd-sample\" OIDCProviderArn=\"\""
 image_repositories = []
