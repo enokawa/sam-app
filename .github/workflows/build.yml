@@ -1,15 +1,14 @@
-name: Deploy
+name: Build
 
 on:
   push:
-    branches: [ main ]
-  workflow_dispatch:
+    branches-ignore:
+      - main
+  pull_request:
+  workflow_call:
 
 jobs:
   build:
-    uses: .github/workflows/build.yml
-  deploy:
-    needs: [ build ]
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
@@ -25,6 +24,11 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
+          cache: 'pip'
+          cache-dependency-path: 'tests/requirements.txt'
+
+      - name: pip install
+        run: pip install -r tests/requirements.txt
 
       - name: Setup AWS SAM CLI
         uses: aws-actions/setup-sam@v2
@@ -34,10 +38,18 @@ jobs:
         with:
           aws-region: ${{ secrets.AWS_REGION }}
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/dev-OIDCRole
-          role-session-name: SAMDeploySession
+          role-session-name: SAMBuildSession
+
+      - name: Validate CloudFormation template
+        run: aws cloudformation validate-template --template-body file://.aws-sam/build/template.yaml
 
       - name: sam build
         run: sam build
 
-      - name: sam deploy
-        run: sam deploy --s3-bucket ${{ secrets.S3_BUCKET_NAME }} --no-confirm-changeset --no-fail-on-empty-changeset
+      - name: Unit test
+        run: python -m pytest tests/unit -v
+
+      - name: Integration test
+        run: python -m pytest tests/integration -v
+        env:
+          AWS_SAM_STACK_NAME: ${{ secrets.AWS_SAM_STACK_NAME }}
